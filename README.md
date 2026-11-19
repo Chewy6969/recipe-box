@@ -28,3 +28,11 @@ The SQLite database is stored in `recipe_box.db` and is created automatically at
 
 Passwords are stored as secure Werkzeug hashes. Recipe endpoints are intentionally
 unauthenticated for now; token authentication and ownership checks can be added next.
+
+## Render deployment
+
+The repository includes a Render blueprint. It creates a public web service and a
+PostgreSQL database, with `DATABASE_URL` configured automatically.
+
+Create or connect the repository in [Render](https://dashboard.render.com), choose
+**New > Blueprint**, and select `Chewy6969/recipe-box`.

@@ -1,11 +1,17 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-SQLITE_URL = "sqlite:///./recipe_box.db"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./recipe_box.db")
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
 engine = create_engine(
-    SQLITE_URL,
-    connect_args={"check_same_thread": False},
+    DATABASE_URL,
+    connect_args=(
+        {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+    ),
 )
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 

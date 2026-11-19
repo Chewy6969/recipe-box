@@ -18,6 +18,20 @@ async def lifespan(_: FastAPI):
 app = FastAPI(title="Recipe Box API", version="1.0.0", lifespan=lifespan)
 
 
+@app.get("/")
+def root():
+    return {
+        "name": "Recipe Box API",
+        "documentation": "/docs",
+        "health": "/health",
+    }
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
 @app.post("/register", status_code=status.HTTP_201_CREATED)
 def register(payload: UserRegister, db: Session = Depends(get_db)):
     existing = db.scalar(select(User).where(User.email == payload.email))
