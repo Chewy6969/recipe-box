@@ -75,3 +75,22 @@ def test_register_login_and_recipe_crud(client):
     deleted = client.delete(f"/recipes/{recipe_id}")
     assert deleted.status_code == 204
     assert client.get(f"/recipes/{recipe_id}").status_code == 404
+
+
+def test_validation_and_generic_login_failure(client):
+    assert client.post(
+        "/register",
+        json={"email": "not-an-email", "password": "password123"},
+    ).status_code == 422
+    assert client.post(
+        "/register",
+        json={"email": "cook@example.com", "password": "short"},
+    ).status_code == 422
+    assert client.post(
+        "/recipes",
+        json={"title": "   ", "ingredients": "salt", "steps": "Mix"},
+    ).status_code == 422
+    assert client.post(
+        "/login",
+        json={"email": "missing@example.com", "password": "wrong"},
+    ).status_code == 401

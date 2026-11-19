@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import Depends, FastAPI, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -7,12 +9,13 @@ from models import Recipe, User
 from password_utils import hash_password, verify_password
 from schemas import RecipeCreate, RecipeResponse, RecipeUpdate, UserLogin, UserRegister
 
-app = FastAPI(title="Recipe Box API", version="1.0.0")
-
-
-@app.on_event("startup")
-def create_tables() -> None:
+@asynccontextmanager
+async def lifespan(_: FastAPI):
     Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="Recipe Box API", version="1.0.0", lifespan=lifespan)
 
 
 @app.post("/register", status_code=status.HTTP_201_CREATED)
